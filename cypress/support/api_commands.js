@@ -3,10 +3,10 @@ const accessToken = `Bearer ${Cypress.env('gitlab_access_token')}`
 {
   Cypress.Commands.add('api_createProject', project => {
     cy.request({
-      timeout: 240000,
+      timeout: 900000,
       method: 'POST',
       url: `/api/v4/projects/`,
-      timeout: 180000,
+      //timeout: 180000,
       body: {
         name: project.name,
         description: project.description,
@@ -38,3 +38,21 @@ const accessToken = `Bearer ${Cypress.env('gitlab_access_token')}`
     )
   })
 } // api_deleteProjects
+
+{//api_createIssue
+  Cypress.Commands.add('api_createIssue', issue => {
+    cy.api_createProject(issue.project)
+    .then(response => {
+      cy.request({
+        timeout: 900000,
+        method: 'POST',
+        url: `/api/v4/projects/${response.body.id}/issues`,
+        body: {
+          title: issue.title,
+          description: issue.description
+        },
+        headers: { Authorization: accessToken },
+      })
+    })
+  })
+}
